@@ -25,6 +25,7 @@ class VendorField extends AbstractModifier{
      */
     private $vendorFactory;
 
+    protected $vendors = [];
     /**
      * Fields constructor.
      *
@@ -40,6 +41,20 @@ class VendorField extends AbstractModifier{
         $this->locator = $locator;
         $this->vendorProduct = $vendorProduct;
         $this->vendorFactory = $vendorFactory;
+        $this->initVendors();
+    }
+
+    protected function initVendors(){
+
+        $product   = $this->locator->getProduct();
+        $productId = $product->getId();
+        $vendorIds = $this->vendorProduct->getVendors($productId);
+        $this->vendors = [];
+        $vendorModel = $this->vendorFactory->create();
+        foreach ($vendorIds as $vendorId){
+            $vendorModel->load($vendorId);
+            $this->vendors[] = ['value' => $vendorId, 'label' => $vendorModel->getVendorName()];
+        }
     }
 
     /**
@@ -51,19 +66,13 @@ class VendorField extends AbstractModifier{
     {
         $product   = $this->locator->getProduct();
         $productId = $product->getId();
-        $vendorIds = $this->vendorProduct->getVendors($productId);
-        if (empty($vendorIds)){
+
+        if (empty($this->vendors)){
 
             return $data;
         }
-        $result = [];
-        $vendorModel = $this->vendorFactory->create();
-        foreach ($vendorIds as $vendorId){
-           $vendorModel->load($vendorId);
-           $result[] = ['value' => $vendorId, 'label' => $vendorModel->getVendorName()];
-        }
 
-        $data[strval($productId)]['vendor']['vendorname'] = $result;
+        $data[strval($productId)]['vendor']['vendorname'] = $this->vendors;
 
         return $data;
 
@@ -112,10 +121,7 @@ class VendorField extends AbstractModifier{
                             'dataScope'     => 'data.vendorname',
                             'dataType'      => Text::NAME,
                             'sortOrder'     => 10,
-                            'options'       => [
-                                ['value' => '0', 'label' => __('Nike')],
-                                ['value' => '1', 'label' => __('Puma')]
-                            ],
+                            'options'       => $this->vendors
                         ],
                     ],
                 ],
