@@ -18,7 +18,8 @@ class VendorProductViewModel implements  ArgumentInterface{
         $this->vendor = $vendor;
     }
 
-    public function getVendorsByProductId(int $productId){
+    public function getVendorsByProductId(int $productId)
+    {
 
         return $this->resource->getVendors($productId);
     }

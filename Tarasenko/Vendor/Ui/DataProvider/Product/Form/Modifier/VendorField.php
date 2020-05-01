@@ -7,7 +7,7 @@ use Magento\Ui\Component\Form\Element\Select;
 use Magento\Ui\Component\Form\Element\DataType\Text;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Tarasenko\Vendor\Model\VendorProduct;
-use Tarasenko\Vendor\Api\Data\VendorFactoryInterface;
+use Tarasenko\Vendor\Model\VendorFactory;
 
 class VendorField extends AbstractModifier{
     /**
@@ -21,7 +21,7 @@ class VendorField extends AbstractModifier{
     private $vendorProduct;
 
     /**
-     * @var VendorFactoryInterface
+     * @var VendorFactory
      */
     private $vendorFactory;
 
@@ -31,12 +31,12 @@ class VendorField extends AbstractModifier{
      *
      * @param LocatorInterface $locator
      * @param VendorProduct $vendorProduct
-     * @param VendorFactoryInterface $vendorFactory
+     * @param VendorFactory $vendorFactory
      */
     public function __construct(
         LocatorInterface $locator,
         VendorProduct $vendorProduct,
-        VendorFactoryInterface $vendorFactory
+        VendorFactory $vendorFactory
     ) {
         $this->locator = $locator;
         $this->vendorProduct = $vendorProduct;
@@ -44,7 +44,8 @@ class VendorField extends AbstractModifier{
         $this->initVendors();
     }
 
-    protected function initVendors(){
+    protected function initVendors()
+    {
 
         $product   = $this->locator->getProduct();
         $productId = $product->getId();
